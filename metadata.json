@@ -1,0 +1,6 @@
+{
+  "name": "Al-Rabil Mobile & CCTV ERP - Oman Sales, Services & Smart Management",
+  "description": "Comprehensive Oman Mobile Shop & CCTV ERP featuring POS, inventory tracking, repair job cards, CCTV protection & live monitoring, bill payments, multi-bank cash-in-hand ledger, Oman VAT 5% invoices, and Gemini financial AI.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

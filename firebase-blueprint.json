@@ -1,0 +1,523 @@
+{
+  "entities": {
+    "customer": {
+      "title": "Customer",
+      "description": "Customer contact info, purchase history, and credit balance",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique customer ID",
+          "maxLength": 64
+        },
+        "name": {
+          "type": "string",
+          "description": "Full customer name",
+          "maxLength": 128
+        },
+        "nameAr": {
+          "type": "string",
+          "description": "Arabic customer name",
+          "maxLength": 128
+        },
+        "phone": {
+          "type": "string",
+          "description": "Primary phone number in Oman / GCC",
+          "maxLength": 32
+        },
+        "email": {
+          "type": "string",
+          "description": "Email address",
+          "maxLength": 128
+        },
+        "civilIdOrCr": {
+          "type": "string",
+          "description": "Oman Civil ID or Commercial Registration number",
+          "maxLength": 64
+        },
+        "city": {
+          "type": "string",
+          "description": "Oman city or region",
+          "maxLength": 64
+        },
+        "address": {
+          "type": "string",
+          "description": "Street or shop address",
+          "maxLength": 256
+        },
+        "creditLimit": {
+          "type": "number",
+          "description": "Max credit allowance in OMR"
+        },
+        "currentCredit": {
+          "type": "number",
+          "description": "Outstanding unpaid credit balance in OMR"
+        },
+        "totalPurchases": {
+          "type": "number",
+          "description": "Lifetime purchase total in OMR"
+        },
+        "totalInvoicesCount": {
+          "type": "number",
+          "description": "Total number of completed sales invoices"
+        },
+        "lastPurchaseDate": {
+          "type": "string",
+          "description": "ISO date of latest transaction",
+          "maxLength": 32
+        },
+        "notes": {
+          "type": "string",
+          "description": "Account manager notes",
+          "maxLength": 1000
+        },
+        "tag": {
+          "type": "string",
+          "description": "Classification tag",
+          "enum": ["vip", "corporate", "wholesale", "regular", "defaulter", "technician"]
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Record creation date",
+          "maxLength": 32
+        }
+      },
+      "required": ["id", "name", "phone", "currentCredit"]
+    },
+    "product": {
+      "title": "Product",
+      "description": "Inventory product item in stock",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique product ID",
+          "maxLength": 64
+        },
+        "name": {
+          "type": "string",
+          "description": "Product display name",
+          "maxLength": 150
+        },
+        "nameAr": {
+          "type": "string",
+          "description": "Product Arabic name",
+          "maxLength": 150
+        },
+        "sku": {
+          "type": "string",
+          "description": "Stock keeping unit code",
+          "maxLength": 64
+        },
+        "barcode": {
+          "type": "string",
+          "description": "Scannable barcode string",
+          "maxLength": 64
+        },
+        "categoryId": {
+          "type": "string",
+          "description": "ID of category",
+          "maxLength": 64
+        },
+        "costPrice": {
+          "type": "number",
+          "description": "Purchase cost in OMR"
+        },
+        "sellingPrice": {
+          "type": "number",
+          "description": "Retail price in OMR"
+        },
+        "stock": {
+          "type": "number",
+          "description": "Current quantity on hand"
+        },
+        "minStockAlert": {
+          "type": "number",
+          "description": "Minimum stock replenishment threshold"
+        },
+        "isHousehold": {
+          "type": "boolean",
+          "description": "Whether item is a household appliance"
+        },
+        "isCCTV": {
+          "type": "boolean",
+          "description": "Whether item is CCTV/surveillance equipment"
+        },
+        "brand": {
+          "type": "string",
+          "description": "Brand manufacturer name",
+          "maxLength": 64
+        },
+        "warrantyMonths": {
+          "type": "number",
+          "description": "Warranty duration in months"
+        }
+      },
+      "required": ["id", "name", "sku", "costPrice", "sellingPrice", "stock"]
+    },
+    "sale": {
+      "title": "SaleTransaction",
+      "description": "Customer invoice and sale transaction",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique transaction ID",
+          "maxLength": 64
+        },
+        "invoiceNumber": {
+          "type": "string",
+          "description": "Tax invoice number",
+          "maxLength": 64
+        },
+        "date": {
+          "type": "string",
+          "description": "Transaction timestamp ISO string",
+          "maxLength": 32
+        },
+        "branchId": {
+          "type": "string",
+          "description": "Originating branch ID",
+          "maxLength": 64
+        },
+        "cashierId": {
+          "type": "string",
+          "description": "Cashier staff ID",
+          "maxLength": 64
+        },
+        "cashierName": {
+          "type": "string",
+          "description": "Cashier staff name",
+          "maxLength": 100
+        },
+        "customerName": {
+          "type": "string",
+          "description": "Customer name",
+          "maxLength": 128
+        },
+        "customerPhone": {
+          "type": "string",
+          "description": "Customer phone",
+          "maxLength": 32
+        },
+        "subtotal": {
+          "type": "number",
+          "description": "Pre-tax subtotal in OMR"
+        },
+        "vatAmount": {
+          "type": "number",
+          "description": "Oman 5% VAT in OMR"
+        },
+        "discount": {
+          "type": "number",
+          "description": "Discount in OMR"
+        },
+        "grandTotal": {
+          "type": "number",
+          "description": "Net total payable in OMR"
+        },
+        "paymentMethod": {
+          "type": "string",
+          "description": "Settlement payment method",
+          "enum": ["cash", "bank_transfer", "card", "customer_credit"]
+        },
+        "status": {
+          "type": "string",
+          "description": "Payment status",
+          "enum": ["paid", "pending", "partially_paid"]
+        }
+      },
+      "required": ["id", "invoiceNumber", "customerName", "grandTotal", "paymentMethod", "status"]
+    },
+    "repairTicket": {
+      "title": "RepairTicket",
+      "description": "Mobile and electronics repair work order",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique repair ticket ID",
+          "maxLength": 64
+        },
+        "ticketNumber": {
+          "type": "string",
+          "description": "Job card number",
+          "maxLength": 64
+        },
+        "customerName": {
+          "type": "string",
+          "description": "Customer name",
+          "maxLength": 128
+        },
+        "customerPhone": {
+          "type": "string",
+          "description": "Customer phone number",
+          "maxLength": 32
+        },
+        "deviceModel": {
+          "type": "string",
+          "description": "Device brand and model",
+          "maxLength": 128
+        },
+        "issueDescription": {
+          "type": "string",
+          "description": "Fault description",
+          "maxLength": 500
+        },
+        "status": {
+          "type": "string",
+          "description": "Repair lifecycle state",
+          "enum": ["received", "diagnosing", "in_progress", "waiting_parts", "completed", "delivered", "unrepairable"]
+        },
+        "estimatedCost": {
+          "type": "number",
+          "description": "Estimated repair price in OMR"
+        },
+        "advancePaid": {
+          "type": "number",
+          "description": "Deposit collected upfront in OMR"
+        },
+        "technicianNotes": {
+          "type": "string",
+          "description": "Internal diagnostic notes",
+          "maxLength": 1000
+        }
+      },
+      "required": ["id", "ticketNumber", "customerName", "deviceModel", "status"]
+    },
+    "branchTransfer": {
+      "title": "BranchStockTransfer",
+      "description": "Inter-branch stock rebalance document",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique transfer ID",
+          "maxLength": 64
+        },
+        "transferNumber": {
+          "type": "string",
+          "description": "Official transfer slip number",
+          "maxLength": 64
+        },
+        "sourceBranchId": {
+          "type": "string",
+          "description": "Dispatch branch ID",
+          "maxLength": 64
+        },
+        "sourceBranchName": {
+          "type": "string",
+          "description": "Dispatch branch name",
+          "maxLength": 100
+        },
+        "targetBranchId": {
+          "type": "string",
+          "description": "Receiving branch ID",
+          "maxLength": 64
+        },
+        "targetBranchName": {
+          "type": "string",
+          "description": "Receiving branch name",
+          "maxLength": 100
+        },
+        "status": {
+          "type": "string",
+          "description": "Transit status",
+          "enum": ["draft", "in_transit", "received", "cancelled"]
+        },
+        "transferredBy": {
+          "type": "string",
+          "description": "Authorizing person or owner",
+          "maxLength": 100
+        },
+        "notes": {
+          "type": "string",
+          "description": "Delivery instructions",
+          "maxLength": 500
+        }
+      },
+      "required": ["id", "transferNumber", "sourceBranchId", "targetBranchId", "status"]
+    },
+    "pendingService": {
+      "title": "PendingServiceWork",
+      "description": "Delayed repair or CCTV job bottleneck tracker",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique service tracking ID",
+          "maxLength": 64
+        },
+        "serviceType": {
+          "type": "string",
+          "description": "Service category",
+          "enum": ["mobile_repair", "cctv_field_job", "smart_door", "warranty_claim"]
+        },
+        "referenceCode": {
+          "type": "string",
+          "description": "Related reference code or ticket number",
+          "maxLength": 64
+        },
+        "customerName": {
+          "type": "string",
+          "description": "Customer or commercial client name",
+          "maxLength": 128
+        },
+        "customerPhone": {
+          "type": "string",
+          "description": "Customer phone number",
+          "maxLength": 32
+        },
+        "deviceOrSite": {
+          "type": "string",
+          "description": "Device model or installation site name",
+          "maxLength": 150
+        },
+        "daysPending": {
+          "type": "number",
+          "description": "Number of days delayed"
+        },
+        "reasonCategory": {
+          "type": "string",
+          "description": "Bottleneck reason code",
+          "maxLength": 64
+        },
+        "pendingDetailsReason": {
+          "type": "string",
+          "description": "Detailed explanation of delay",
+          "maxLength": 1000
+        },
+        "priority": {
+          "type": "string",
+          "description": "Urgency rating",
+          "enum": ["normal", "high", "urgent"]
+        },
+        "status": {
+          "type": "string",
+          "description": "Current status",
+          "enum": ["pending", "in_action", "resolved"]
+        }
+      },
+      "required": ["id", "serviceType", "customerName", "daysPending", "reasonCategory", "status"]
+    },
+    "expense": {
+      "title": "ExpenseRecord",
+      "description": "Shop operation and overhead expense",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique expense record ID",
+          "maxLength": 64
+        },
+        "category": {
+          "type": "string",
+          "description": "Expense category",
+          "maxLength": 64
+        },
+        "description": {
+          "type": "string",
+          "description": "Description of expense",
+          "maxLength": 256
+        },
+        "amount": {
+          "type": "number",
+          "description": "Expense amount in OMR"
+        },
+        "paymentMethod": {
+          "type": "string",
+          "description": "Source of payment",
+          "enum": ["cash", "bank_transfer", "card"]
+        },
+        "date": {
+          "type": "string",
+          "description": "Date ISO string",
+          "maxLength": 32
+        },
+        "branchId": {
+          "type": "string",
+          "description": "Branch code",
+          "maxLength": 64
+        }
+      },
+      "required": ["id", "category", "amount", "paymentMethod", "date"]
+    },
+    "companyConfig": {
+      "title": "CompanyConfig",
+      "description": "Business registration and branding profile",
+      "type": "object",
+      "properties": {
+        "companyName": {
+          "type": "string",
+          "description": "English commercial name",
+          "maxLength": 150
+        },
+        "companyNameAr": {
+          "type": "string",
+          "description": "Arabic commercial name",
+          "maxLength": 150
+        },
+        "crNumber": {
+          "type": "string",
+          "description": "Ministry of Commerce CR number",
+          "maxLength": 64
+        },
+        "vatNumber": {
+          "type": "string",
+          "description": "Tax Authority VAT identification",
+          "maxLength": 64
+        },
+        "phone": {
+          "type": "string",
+          "description": "Official company hotline",
+          "maxLength": 32
+        },
+        "email": {
+          "type": "string",
+          "description": "Company email address",
+          "maxLength": 128
+        },
+        "address": {
+          "type": "string",
+          "description": "HQ office address in Oman",
+          "maxLength": 256
+        }
+      },
+      "required": ["companyName", "crNumber", "vatNumber"]
+    }
+  },
+  "firestore": {
+    "/customers/{customerId}": {
+      "schema": "customer",
+      "description": "Customer Directory, purchase records, and credit ledger"
+    },
+    "/products/{productId}": {
+      "schema": "product",
+      "description": "Store inventory catalog with stock tracking"
+    },
+    "/sales/{saleId}": {
+      "schema": "sale",
+      "description": "POS sales invoices, VAT breakdowns, and payments"
+    },
+    "/repairTickets/{ticketId}": {
+      "schema": "repairTicket",
+      "description": "Mobile phone and electronic device repair job cards"
+    },
+    "/branchTransfers/{transferId}": {
+      "schema": "branchTransfer",
+      "description": "Stock balance transfers between shop branches"
+    },
+    "/pendingServices/{pendingId}": {
+      "schema": "pendingService",
+      "description": "Service delay tracking and bottleneck management"
+    },
+    "/expenses/{expenseId}": {
+      "schema": "expense",
+      "description": "Shop overhead expenses and petty cash ledger"
+    },
+    "/systemConfig/company": {
+      "schema": "companyConfig",
+      "description": "Official company profile, CR, VAT, and contact info"
+    }
+  }
+}

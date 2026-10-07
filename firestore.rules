@@ -1,0 +1,162 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // 1. Global Default-Deny Catch-All
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // 2. Connectivity Health Check probe
+    match /test/connection {
+      allow read: if true;
+    }
+
+    // Core Hardened Security Helpers
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    // Entity Validators
+    function isValidCustomer(data) {
+      return data.keys().hasAll(['id', 'name', 'phone'])
+        && data.id is string && data.id.size() <= 64
+        && data.name is string && data.name.size() <= 128
+        && data.phone is string && data.phone.size() <= 32
+        && (!('creditBalance' in data) || data.creditBalance is number)
+        && (!('creditLimit' in data) || data.creditLimit is number);
+    }
+
+    function isValidProduct(data) {
+      return data.keys().hasAll(['id', 'name', 'sku', 'costPrice', 'sellingPrice', 'stock'])
+        && data.id is string && data.id.size() <= 64
+        && data.name is string && data.name.size() <= 150
+        && data.sku is string && data.sku.size() <= 64
+        && data.costPrice is number
+        && data.sellingPrice is number
+        && data.stock is number;
+    }
+
+    function isValidSale(data) {
+      return data.keys().hasAll(['id', 'invoiceNumber', 'customerName', 'grandTotal', 'paymentMethod', 'status'])
+        && data.id is string && data.id.size() <= 64
+        && data.invoiceNumber is string && data.invoiceNumber.size() <= 64
+        && data.customerName is string && data.customerName.size() <= 128
+        && data.grandTotal is number
+        && data.paymentMethod is string
+        && data.status is string;
+    }
+
+    function isValidRepair(data) {
+      return data.keys().hasAll(['id', 'ticketNumber', 'customerName', 'deviceModel', 'status'])
+        && data.id is string && data.id.size() <= 64
+        && data.ticketNumber is string && data.ticketNumber.size() <= 64
+        && data.customerName is string && data.customerName.size() <= 128
+        && data.deviceModel is string && data.deviceModel.size() <= 128
+        && data.status is string;
+    }
+
+    function isValidTransfer(data) {
+      return data.keys().hasAll(['id', 'transferNumber', 'sourceBranchId', 'targetBranchId', 'status'])
+        && data.id is string && data.id.size() <= 64
+        && data.transferNumber is string && data.transferNumber.size() <= 64
+        && data.sourceBranchId is string && data.sourceBranchId.size() <= 64
+        && data.targetBranchId is string && data.targetBranchId.size() <= 64
+        && data.status is string;
+    }
+
+    function isValidPendingService(data) {
+      return data.keys().hasAll(['id', 'serviceType', 'customerName', 'daysPending', 'reasonCategory', 'status'])
+        && data.id is string && data.id.size() <= 64
+        && data.serviceType is string && data.serviceType.size() <= 64
+        && data.customerName is string && data.customerName.size() <= 128
+        && data.daysPending is number
+        && data.reasonCategory is string && data.reasonCategory.size() <= 64
+        && data.status is string;
+    }
+
+    function isValidExpense(data) {
+      return data.keys().hasAll(['id', 'category', 'amount', 'paymentMethod', 'date'])
+        && data.id is string && data.id.size() <= 64
+        && data.category is string && data.category.size() <= 64
+        && data.amount is number
+        && data.paymentMethod is string
+        && data.date is string;
+    }
+
+    function isValidCompanyConfig(data) {
+      return data.keys().hasAll(['companyName', 'crNumber', 'vatNumber'])
+        && data.companyName is string && data.companyName.size() <= 150
+        && data.crNumber is string && data.crNumber.size() <= 64
+        && data.vatNumber is string && data.vatNumber.size() <= 64;
+    }
+
+    // Match Collections
+    match /customers/{customerId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn() && isValidId(customerId) && isValidCustomer(incoming());
+      allow update: if isSignedIn() && isValidId(customerId) && isValidCustomer(incoming());
+      allow delete: if isSignedIn() && isValidId(customerId);
+    }
+
+    match /products/{productId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn() && isValidId(productId) && isValidProduct(incoming());
+      allow update: if isSignedIn() && isValidId(productId) && isValidProduct(incoming());
+      allow delete: if isSignedIn() && isValidId(productId);
+    }
+
+    match /sales/{saleId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn() && isValidId(saleId) && isValidSale(incoming());
+      allow update: if isSignedIn() && isValidId(saleId) && isValidSale(incoming());
+      allow delete: if isSignedIn() && isValidId(saleId);
+    }
+
+    match /repairTickets/{ticketId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn() && isValidId(ticketId) && isValidRepair(incoming());
+      allow update: if isSignedIn() && isValidId(ticketId) && isValidRepair(incoming());
+      allow delete: if isSignedIn() && isValidId(ticketId);
+    }
+
+    match /branchTransfers/{transferId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn() && isValidId(transferId) && isValidTransfer(incoming());
+      allow update: if isSignedIn() && isValidId(transferId) && isValidTransfer(incoming());
+      allow delete: if isSignedIn() && isValidId(transferId);
+    }
+
+    match /pendingServices/{pendingId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn() && isValidId(pendingId) && isValidPendingService(incoming());
+      allow update: if isSignedIn() && isValidId(pendingId) && isValidPendingService(incoming());
+      allow delete: if isSignedIn() && isValidId(pendingId);
+    }
+
+    match /expenses/{expenseId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn() && isValidId(expenseId) && isValidExpense(incoming());
+      allow update: if isSignedIn() && isValidId(expenseId) && isValidExpense(incoming());
+      allow delete: if isSignedIn() && isValidId(expenseId);
+    }
+
+    match /systemConfig/company {
+      allow read: if isSignedIn();
+      allow create, update: if isSignedIn() && isValidCompanyConfig(incoming());
+      allow delete: if false;
+    }
+  }
+}
